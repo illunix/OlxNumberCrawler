@@ -6,6 +6,7 @@ internal sealed class App
 {
     private IWebDriver _driver;
     private WebDriverWait _driverWait;
+    private IJavaScriptExecutor _jsExecutor;
     private List<string> _offersHrefs = new List<string>();
     private List<string> _numbers = new List<string>();
     private string _baseOffersUrl = "";
@@ -172,44 +173,52 @@ internal sealed class App
         Thread.Sleep(1000);
     }
 
+    private bool isElementExists(By by)
+    {
+        try
+        {
+            var element = _driver.FindElement(by);
+
+            return true;
+		}
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     private void RevealNumber()
     {
         Thread.Sleep(3000);
 
-        var numberButton = _driverWait.Until(driver =>
-        {
-            var element = driver.FindElement(By.XPath(ElementSelectors.OfferDetailsPage.NUMBER_BUTTON));
-            return (
-                element is not null && 
-                element.Displayed && 
-                element.Enabled
-            ) ? 
-                element : 
-                throw new NoSuchElementException();
-        });
+        if (!isElementExists(By.ClassName(ElementSelectors.OfferDetailsPage.NUMBER_BUTTON_CLASS)))
+		{
+			_driver.Navigate().GoToUrl(_baseOffersUrl);
+            return;
+		}
 
-        numberButton.Click();
+		_jsExecutor = (IJavaScriptExecutor)_driver;
+		_jsExecutor.ExecuteScript($"document.querySelector('.{ElementSelectors.OfferDetailsPage.NUMBER_BUTTON_CLASS}').click()");
 
-        var number = _driverWait.Until(driver =>
-        {
-            var elements = driver.FindElements(By.XPath(ElementSelectors.OfferDetailsPage.NUMBER));
-            if (
-                elements.Count > 0 && 
-                elements[0].Displayed
-            )
-                return elements[0];
+		Thread.Sleep(2000);
 
-            return null;
-        });
+		var number = _driverWait.Until(driver =>
+		{
+			var elements = driver.FindElements(By.ClassName(ElementSelectors.OfferDetailsPage.NUMBER_CLASS));
+			if (
+				elements.Count > 0 &&
+				elements[0].Displayed
+			)
+				return elements[0];
 
-        if (number is not null)
-        {
-            Log.Information(number.Text);
-            _numbers.Add(number.Text);
-        }
+			return null;
+		});
 
-        _driver.Navigate().GoToUrl(_baseOffersUrl);
-    }
+		Log.Information(number.Text);
+		_numbers.Add(number.Text);
+
+		_driver.Navigate().GoToUrl(_baseOffersUrl);
+	}
 
     private void Base()
     {
