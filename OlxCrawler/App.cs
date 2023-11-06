@@ -174,7 +174,7 @@ internal sealed class App
 
     private void RevealNumber()
     {
-        Thread.Sleep(10000);
+        Thread.Sleep(3000);
 
         var numberButton = _driverWait.Until(driver =>
         {
