@@ -105,11 +105,12 @@ internal sealed class App
 
         _baseOffersUrl = _driver.Url;
 
+#if DEBUG
+        ScrapOffersHrefs();
+#else
         do
         {
             ScrapOffersHrefs();
-            break;
-            /*
             if (IsForwardButtonPresent())
             {
                 ForwardOffersPagination(); 
@@ -119,9 +120,9 @@ internal sealed class App
             {
                 break; 
             }
-            */
         }
         while (true);
+#endif
     }
 
     private void ForwardOffersPagination()
@@ -173,6 +174,8 @@ internal sealed class App
 
     private void RevealNumber()
     {
+        Thread.Sleep(10000);
+
         var numberButton = _driverWait.Until(driver =>
         {
             var element = driver.FindElement(By.XPath(ElementSelectors.OfferDetailsPage.NUMBER_BUTTON));
@@ -203,10 +206,6 @@ internal sealed class App
         {
             Log.Information(number.Text);
             _numbers.Add(number.Text);
-        }
-        else
-        {
-            Log.Information("Number element was not found.");
         }
 
         _driver.Navigate().GoToUrl(_baseOffersUrl);
