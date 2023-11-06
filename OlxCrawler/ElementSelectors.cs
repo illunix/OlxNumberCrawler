@@ -17,7 +17,7 @@ public static class ElementSelectors
 
     public static class OfferDetailsPage
     {
-        public const string NUMBER_BUTTON = "//*[@id=\"mainContent\"]/div[2]/main/aside/div[1]/section/div[1]/button";
-        public const string NUMBER = "//*[@data-testid='primary-contact-phone']";
-    }
+        public const string NUMBER_BUTTON_CLASS = "css-1nd8q08";
+        public const string NUMBER_CLASS = "css-v1ndtc";
+	}
 }
