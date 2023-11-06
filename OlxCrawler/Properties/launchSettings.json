@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OlxCrawler": {
+      "commandName": "Project",
+      "commandLineArgs": "get-numbers --searchPhrase \"essa\""
+    }
+  }
+}
